@@ -24,5 +24,13 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "overrides": {
+    "html2canvas": "npm:html2canvas-pro@latest"
+  },
+  "dependencies": {
+    "html2canvas-pro": "^2.2.4",
+    "html2pdf.js": "^0.14.0",
+    "jspdf": "^4.2.1"
+  }
 }
