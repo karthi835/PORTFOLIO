@@ -175,6 +175,7 @@ const projects: Project[] = [
       'Polished slider customer reviews section and Google Maps widget integration',
       'Fully responsive media-query breakpoints for mobile, tablet, and desktop screens'
     ],
+    image: '/projects/coffee-shop.png',
     svg: () => (
       <svg className="w-full h-full p-8" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="165" rx="40" ry="5" fill="rgba(0,0,0,0.06)" />
@@ -201,6 +202,7 @@ const projects: Project[] = [
       'Advanced estimation algorithm parsing area, location, and rooms parameters',
       'Clean responsive layout rendering instant results asynchronously'
     ],
+    image: '/projects/house-price.png',
     svg: () => (
       <svg className="w-full h-full p-8" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="165" rx="55" ry="5" fill="rgba(0,0,0,0.06)" />
@@ -227,6 +229,7 @@ const projects: Project[] = [
       'Pandas CSV/Excel data cleaning and batch database import pipelines',
       'Role-based access permissions securing multi-user workspace accounts'
     ],
+    image: '/projects/edumanage.jpg',
     svg: () => (
       <svg className="w-full h-full p-8" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="165" rx="50" ry="5" fill="rgba(0,0,0,0.06)" />
@@ -250,6 +253,7 @@ const services: Service[] = [
     price: 9000,
     description: 'Complete architecture and implementation of modern web applications. Combines robust backend logic in Spring Boot or Node.js with responsive, animated React.js frontend interfaces.',
     techStack: ['Java', 'Spring Boot', 'React', 'JavaScript', 'SQL'],
+    image: '/services/full-stack.png',
     svg: () => (
       <svg className="w-full h-full p-8" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="170" rx="35" ry="4" fill="rgba(0,0,0,0.06)" />
@@ -271,6 +275,7 @@ const services: Service[] = [
     price: 6000,
     description: 'Secure, clean backend API design using Java and Spring Boot. Incorporates Maven package dependency configuration, relational database schemas, query mapping, and REST endpoint routes.',
     techStack: ['Java', 'Spring Boot', 'Maven', 'REST APIs', 'SQL'],
+    image: '/services/spring-boot-api.png',
     svg: () => (
       <svg className="w-full h-full p-8" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="165" rx="30" ry="3" fill="rgba(0,0,0,0.05)" />
@@ -291,6 +296,7 @@ const services: Service[] = [
     price: 5000,
     description: 'Processing raw data patterns into actionable insights. Designing SQL query filters, cleaning transactional logs, and assembling custom dashboard telemetry charts.',
     techStack: ['SQL', 'Excel', 'Data Preprocessing', 'Data Visualisation'],
+    image: '/services/data-analytics.png',
     svg: () => (
       <svg className="w-full h-full p-8" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="165" rx="40" ry="4" fill="rgba(0,0,0,0.05)" />
@@ -308,6 +314,7 @@ const services: Service[] = [
     price: 3000,
     description: 'Assembling high-fidelity webpage interfaces conforming to modern design standards. Focus on interactive hover states, cross-browser compatibility, and smooth mobile layouts.',
     techStack: ['HTML5', 'CSS3', 'JavaScript', 'Responsive Layouts'],
+    image: '/services/ui-ux.png',
     svg: () => (
       <svg className="w-full h-full p-8" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="160" rx="45" ry="5" fill="rgba(0,0,0,0.06)" />

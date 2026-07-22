@@ -384,7 +384,15 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                       <span className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm border border-foreground/5 px-2.5 py-1 text-[10px] uppercase font-bold tracking-widest rounded-md text-foreground/60 shadow-sm z-10">
                         {project.category}
                       </span>
-                      <ProjectSvg />
+                      {project.image ? (
+                        <img
+                          src={project.image}
+                          alt={project.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <ProjectSvg />
+                      )}
                     </div>
 
                     <div className="flex items-center justify-between px-1">
@@ -434,7 +442,15 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                     className="group relative flex flex-col justify-between border border-foreground/5 bg-muted/10 p-5 rounded-3xl transition-all duration-300 hover:bg-muted/20 hover:shadow-xl h-full"
                   >
                     <div className="relative aspect-video w-full bg-background rounded-2xl overflow-hidden mb-5 flex items-center justify-center group-hover:scale-[1.01] transition-transform duration-300">
-                      <ServiceSvg />
+                      {service.image ? (
+                        <img
+                          src={service.image}
+                          alt={service.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <ServiceSvg />
+                      )}
                     </div>
 
                     <div className="flex flex-col flex-grow justify-between">
