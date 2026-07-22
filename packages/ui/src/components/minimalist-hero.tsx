@@ -104,8 +104,7 @@ export const MinimalistHero = ({
   return (
     <>
       {/* ── Hero page wrapper ── */}
-      {/* RESPONSIVE FIX: min-h-[calc(100vh-5rem)] on mobile accounts for the 5rem sticky navbar height,
-          preventing excessive vertical whitespace above the hero. On desktop, stays md:min-h-screen. */}
+      {/* RESPONSIVE: min-h-[calc(100vh-5rem)] on mobile prevents excessive whitespace above hero */}
       <div
         className={cn(
           'relative flex min-h-[calc(100vh-5rem)] md:min-h-screen w-full flex-col overflow-hidden bg-black text-white font-sans',
@@ -153,12 +152,9 @@ export const MinimalistHero = ({
       )}
 
       {/* ══════════════════ MAIN CONTENT ══════════════════ */}
-      {/* RESPONSIVE FIX: On mobile (-translate-y-[13vh] was causing overflow).
-          Use a smaller translate on mobile, full on desktop. */}
       <div className="relative z-10 flex flex-1 items-stretch w-full pr-0 md:pr-14 md:-translate-y-[13vh]">
 
         {/* ── Left: Bio, Read More & Icons — vertically centered (desktop only) ── */}
-        {/* RESPONSIVE FIX: Hidden on mobile; mobile users see bio via the About section */}
         <div
           className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-6 md:left-10 z-30 flex-col gap-4 text-left items-start max-w-[280px] pb-0"
         >
@@ -179,7 +175,6 @@ export const MinimalistHero = ({
         </div>
 
         {/* ── Bottom-left: Social icons (desktop only) ── */}
-        {/* RESPONSIVE FIX: Mobile social icons are shown in the mobile-only strip below the portrait */}
         {socialLinks && socialLinks.length > 0 && (
           <div
             className="hidden md:flex absolute bottom-8 left-6 md:left-10 z-30 items-center gap-5"
@@ -202,9 +197,8 @@ export const MinimalistHero = ({
         )}
 
         {/* ── Center: Portrait with orbiting tech icons ── */}
-        {/* RESPONSIVE FIX: On mobile, center portrait vertically and shift slightly above center (-translate-y-4),
-            while preserving desktop items-end alignment. */}
-        <div className="absolute inset-0 flex items-center -translate-y-4 md:translate-y-0 md:items-end justify-center h-full pointer-events-none">
+        {/* RESPONSIVE: Vertically centered on mobile, items-end on desktop */}
+        <div className="absolute inset-0 flex items-center md:items-end justify-center h-full pointer-events-none px-4">
 
           {/* Tech orbit animation styles */}
           <style>{`
@@ -221,7 +215,7 @@ export const MinimalistHero = ({
             .tech-orbit-cw2 { animation: orbit-cw  28s linear infinite; }
           `}</style>
 
-          {/* Orbiting icons layer — behind portrait */}
+          {/* Orbiting icons layer — behind portrait (desktop only) */}
           <div
             className="absolute pointer-events-none z-0 hidden md:block"
             style={{
@@ -303,10 +297,9 @@ export const MinimalistHero = ({
             ))}
           </div>
 
-          {/* RESPONSIVE FIX: Portrait container — on mobile use a smaller height
-              so it fits within the viewport without overflow */}
+          {/* RESPONSIVE: Image container uses w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[550px] max-w-full aspect-[3/4] */}
           <motion.div
-            className="relative flex items-end justify-center h-[75vw] sm:h-[80%] md:h-[90%] max-h-[80vh] aspect-[3/4] pointer-events-auto overflow-hidden"
+            className="relative flex items-end justify-center w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[550px] max-w-full aspect-[3/4] pointer-events-auto overflow-hidden mx-auto"
             style={{
               maskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
               WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
@@ -315,7 +308,7 @@ export const MinimalistHero = ({
             {/* Ambient volumetric golden backlight glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] aspect-square rounded-full bg-[#E5B517]/25 blur-[60px] pointer-events-none z-0" />
 
-            {/* 1. Yellow circle — slides UP from slightly below */}
+            {/* 1. Yellow circle — scales proportionally with the image container */}
             <motion.div
               initial={{ y: 80, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -323,15 +316,13 @@ export const MinimalistHero = ({
                 duration: 1.3,
                 ease: [0.76, 0, 0.24, 1],
               }}
-              className="absolute rounded-full bg-gradient-to-b from-[#E5B517] via-[#E5B517] to-transparent left-1/2 -translate-x-1/2 z-0"
+              className="absolute rounded-full bg-gradient-to-b from-[#E5B517] via-[#E5B517] to-transparent left-1/2 -translate-x-1/2 z-0 w-[95%] aspect-square"
               style={{
-                width: 'min(98%, 730px)',
-                aspectRatio: '1 / 1',
                 top: '30%',
               }}
             />
 
-            {/* 2. Portrait — slides DOWN from slightly above and merges, no float */}
+            {/* 2. Portrait image — scales proportionally with h-auto max-w-full object-contain */}
             <motion.img
               src={imageSrc}
               alt={imageAlt}
@@ -341,7 +332,7 @@ export const MinimalistHero = ({
                 duration: 1.3,
                 ease: [0.76, 0, 0.24, 1],
               }}
-              className="relative z-10 w-auto object-contain filter grayscale select-none pointer-events-auto"
+              className="relative z-10 w-full h-auto object-contain filter grayscale select-none pointer-events-auto max-w-full"
               style={{ height: '108%', top: '5.5%' }}
               onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                 const t = e.target as HTMLImageElement;
@@ -350,11 +341,10 @@ export const MinimalistHero = ({
               }}
             />
 
-            {/* Mobile CV chip — larger touch target, better positioned */}
-            {/* RESPONSIVE FIX: Increased py from 2.5 to 3, ensured min touch area */}
+            {/* Mobile CV chip — positioned cleanly directly over image bottom */}
             <button
               onClick={onCvClick}
-              className="absolute bottom-6 sm:bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/20 bg-black/80 px-5 py-3 backdrop-blur-sm md:hidden pointer-events-auto cursor-pointer active:scale-95 transition-all text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-white hover:bg-black/95 hover:border-white whitespace-nowrap"
+              className="absolute bottom-4 sm:bottom-6 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/20 bg-black/80 px-5 py-2.5 backdrop-blur-sm md:hidden pointer-events-auto cursor-pointer active:scale-95 transition-all text-[11px] font-extrabold uppercase tracking-widest text-white hover:bg-black/95 hover:border-white whitespace-nowrap shadow-lg"
             >
               {overlayText.part1} · {overlayText.part2} · View CV
             </button>
@@ -362,7 +352,6 @@ export const MinimalistHero = ({
         </div>
 
         {/* ── Right Side: KARTHIK DEVELOPER (typewriter) ── */}
-        {/* RESPONSIVE FIX: TypewriterWords is hidden on mobile, shown md+ */}
         <TypewriterWords
           part1={overlayText.part1}
           part2={overlayText.part2}
@@ -371,11 +360,9 @@ export const MinimalistHero = ({
 
       </div>
 
-      {/* ── Mobile-only: Social icons + location strip below portrait ── */}
-      {/* RESPONSIVE FIX: On mobile the left-panel social icons are hidden,
-          so we show a social row here for all mobile/small-tablet viewports */}
+      {/* ── Mobile-only: Social icons strip directly below image ── */}
       {socialLinks && socialLinks.length > 0 && (
-        <div className="relative z-30 flex md:hidden items-center justify-center gap-6 pb-8 pt-2">
+        <div className="relative z-30 flex md:hidden items-center justify-center gap-6 pb-6 pt-2">
           {socialLinks.map((link, i) => {
             const Icon = link.icon;
             return (
@@ -410,11 +397,8 @@ function TypewriterWords({
   onCvClick?: () => void;
 }) {
   const { displayed1, displayed2, done } = useTypewriter([part1, part2], 95, 320);
-  const typingWord2 = displayed1 === part1 && displayed2.length < part2.length;
 
   return (
-    // RESPONSIVE FIX: Reduced from w-[28%] to w-[25%] on md, expands to 28% on lg
-    // to prevent the typewriter text from being squeezed on 769px–900px range
     <div className="hidden md:flex z-30 w-[25%] lg:w-[28%] flex-col justify-center items-end text-right ml-auto gap-5 pr-2 md:pr-6 lg:pr-0">
       <h1
         className="font-extrabold tracking-tight leading-[1.05] text-white text-2xl md:text-3xl lg:text-4xl xl:text-5xl uppercase select-none font-mono"
@@ -448,4 +432,3 @@ function TypewriterWords({
     </div>
   );
 }
-
