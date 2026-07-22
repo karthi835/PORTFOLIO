@@ -104,11 +104,11 @@ export const MinimalistHero = ({
   return (
     <>
       {/* ── Hero page wrapper ── */}
-      {/* RESPONSIVE FIX: min-h-screen ensures the hero fills at least the full viewport
-          on all devices; h-screen is kept for desktop where it looks best */}
+      {/* RESPONSIVE FIX: min-h-[calc(100vh-5rem)] on mobile accounts for the 5rem sticky navbar height,
+          preventing excessive vertical whitespace above the hero. On desktop, stays md:min-h-screen. */}
       <div
         className={cn(
-          'relative flex min-h-screen w-full flex-col overflow-hidden bg-black text-white font-sans',
+          'relative flex min-h-[calc(100vh-5rem)] md:min-h-screen w-full flex-col overflow-hidden bg-black text-white font-sans',
           className
         )}
       >
@@ -202,9 +202,9 @@ export const MinimalistHero = ({
         )}
 
         {/* ── Center: Portrait with orbiting tech icons ── */}
-        {/* RESPONSIVE FIX: On mobile, use relative flow instead of absolute to
-            prevent the portrait from overflowing the hero container */}
-        <div className="absolute inset-0 flex items-end justify-center h-full pointer-events-none">
+        {/* RESPONSIVE FIX: On mobile, center portrait vertically and shift slightly above center (-translate-y-4),
+            while preserving desktop items-end alignment. */}
+        <div className="absolute inset-0 flex items-center -translate-y-4 md:translate-y-0 md:items-end justify-center h-full pointer-events-none">
 
           {/* Tech orbit animation styles */}
           <style>{`
