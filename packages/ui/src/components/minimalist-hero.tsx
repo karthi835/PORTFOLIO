@@ -109,7 +109,10 @@ export const MinimalistHero = ({
       {/* RESPONSIVE: min-h-[calc(100vh-5rem)] on mobile prevents excessive whitespace above hero */}
       <div
         className={cn(
-          'relative flex min-h-[calc(100vh-5rem)] md:min-h-screen w-full flex-col overflow-hidden bg-black text-white font-sans',
+          'relative flex w-full flex-col overflow-hidden bg-black text-white font-sans',
+          forceMobile
+            ? 'min-h-fit py-2'
+            : 'min-h-[500px] sm:min-h-[600px] md:min-h-[680px] lg:min-h-screen',
           className
         )}
       >
@@ -154,7 +157,7 @@ export const MinimalistHero = ({
       )}
 
       {/* ══════════════════ MAIN CONTENT ══════════════════ */}
-      <div className="relative z-10 flex flex-1 items-stretch w-full pr-0 md:pr-14 md:-translate-y-[13vh] pb-[140px] md:pb-0">
+      <div className={forceMobile ? "relative z-10 flex flex-col items-center justify-center w-full pt-4 pb-4 px-4 gap-4" : "relative z-10 flex flex-1 items-stretch w-full pr-0 md:pr-14 md:-translate-y-[13vh] pb-[140px] md:pb-0"}>
 
         {/* ── Left: Bio, Read More & Icons — vertically centered (desktop only) ── */}
         <div
@@ -199,11 +202,9 @@ export const MinimalistHero = ({
         )}
 
         {/* ── Center: Portrait ── */}
-        {/* RESPONSIVE: Vertically centered on mobile, items-end on desktop */}
-        <div className="absolute inset-0 flex items-center md:items-end justify-center h-full pointer-events-none px-4">
-          {/* RESPONSIVE: Image container uses w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[clamp(440px,33vw,500px)] xl:w-[500px] max-w-full aspect-[3/4] */}
+        <div className={forceMobile ? "relative z-20 flex items-center justify-center w-full" : "absolute inset-0 flex items-center md:items-end justify-center h-full pointer-events-none px-4"}>
           <motion.div
-            className="relative flex items-end justify-center w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[clamp(440px,33vw,500px)] xl:w-[500px] max-w-full aspect-[3/4] pointer-events-auto overflow-hidden mx-auto"
+            className={forceMobile ? "relative flex items-end justify-center w-[260px] xs:w-[280px] sm:w-[320px] aspect-[3/4] pointer-events-auto overflow-hidden mx-auto" : "relative flex items-end justify-center w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[clamp(440px,33vw,500px)] xl:w-[500px] max-w-full aspect-[3/4] pointer-events-auto overflow-hidden mx-auto"}
             style={{
               maskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
               WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
@@ -258,7 +259,7 @@ export const MinimalistHero = ({
         />
 
         {/* ── Mobile-only: Heading + View CV button below portrait ── */}
-        <div className={forceMobile ? "absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-6 px-6 z-30" : "md:hidden absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-6 px-6 z-30"}>
+        <div className={forceMobile ? "relative z-30 flex flex-col items-center gap-3 mt-2 px-6" : "md:hidden absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-6 px-6 z-30"}>
           <h1 className="font-extrabold tracking-tight leading-tight text-white text-2xl uppercase text-center font-mono select-none">
             <span className="block">{overlayText.part1}</span>
             <span className="block">{overlayText.part2}</span>
@@ -275,7 +276,7 @@ export const MinimalistHero = ({
 
       {/* ── Mobile-only: Social icons strip directly below image ── */}
       {socialLinks && socialLinks.length > 0 && (
-        <div className={forceMobile ? "relative z-30 flex items-center justify-center gap-6 pb-6 pt-2" : "relative z-30 flex md:hidden items-center justify-center gap-6 pb-6 pt-2"}>
+        <div className={forceMobile ? "relative z-30 flex items-center justify-center gap-6 pt-2 pb-4" : "relative z-30 flex md:hidden items-center justify-center gap-6 pb-6 pt-2"}>
           {socialLinks.map((link, i) => {
             const Icon = link.icon;
             return (
