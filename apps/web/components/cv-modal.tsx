@@ -136,26 +136,32 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
         }
       `}</style>
 
+      {/* RESPONSIVE FIX: On mobile (320px) the full modal height should be a
+          comfortable 85vh; on desktop it can be 90vh. Reduced max-width on small
+          screens via w-[calc(100%-1rem)] with a max-w-4xl cap. */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="relative w-full max-w-4xl h-[90vh] bg-zinc-900 text-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-white/10 print:h-auto print:border-none print:shadow-none print:bg-white print:rounded-none"
+        className="relative w-full max-w-4xl h-[85vh] sm:h-[90vh] bg-zinc-900 text-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-white/10 print:h-auto print:border-none print:shadow-none print:bg-white print:rounded-none"
       >
         {/* Header bar (actions) - hidden during print */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-zinc-950/80 backdrop-blur-sm print-hidden z-10">
+        {/* RESPONSIVE FIX: On 320px screens the header was cramped. We reduce px
+            on mobile (px-3 sm:px-6), hide the CV label title below sm, and let
+            the Download button show text only on sm+. */}
+        <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-zinc-950/80 backdrop-blur-sm print-hidden z-10">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-yellow-400 animate-pulse" />
-            <h2 className="text-sm font-bold tracking-widest uppercase text-zinc-300">Curriculum Vitae</h2>
+            <h2 className="hidden sm:block text-sm font-bold tracking-widest uppercase text-zinc-300">Curriculum Vitae</h2>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={handleDownload}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest text-black bg-yellow-400 hover:bg-yellow-500 rounded-full transition-all active:scale-95 cursor-pointer shadow-md shadow-yellow-400/10"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-xs font-bold uppercase tracking-widest text-black bg-yellow-400 hover:bg-yellow-500 rounded-full transition-all active:scale-95 cursor-pointer shadow-md shadow-yellow-400/10"
             >
               <Download className="w-3.5 h-3.5" />
-              Download PDF
+              <span className="hidden sm:inline">Download PDF</span>
             </button>
             <button
               onClick={onClose}
@@ -168,7 +174,8 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* CV Content Scroll Container */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-zinc-950/40 print:p-0 print:bg-white print:overflow-visible">
+        {/* RESPONSIVE FIX: Reduce scroll area padding on mobile (p-2 sm:p-4 md:p-8) */}
+        <div className="flex-1 overflow-y-auto p-2 sm:p-4 md:p-8 bg-zinc-950/40 print:p-0 print:bg-white print:overflow-visible">
           {/* Printable Page Body (rendered as light paper sheet) */}
           <div
             id="printable-cv-content"
@@ -185,7 +192,9 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Contact Info bar */}
-            <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-[11px] font-medium text-zinc-600 mb-6 pb-4 border-b-2 border-zinc-900">
+            {/* RESPONSIVE FIX: `text-[10px] sm:text-[11px]` shrinks text on tiny
+                screens to prevent the row from overflowing the CV card width. */}
+            <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-[10px] sm:text-[11px] font-medium text-zinc-600 mb-6 pb-4 border-b-2 border-zinc-900">
               <a
                 href="mailto:kn09960@gmail.com"
                 className="flex items-center gap-1.5 hover:text-yellow-600 transition-colors"

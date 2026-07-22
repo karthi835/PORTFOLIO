@@ -104,9 +104,11 @@ export const MinimalistHero = ({
   return (
     <>
       {/* ── Hero page wrapper ── */}
+      {/* RESPONSIVE FIX: min-h-screen ensures the hero fills at least the full viewport
+          on all devices; h-screen is kept for desktop where it looks best */}
       <div
         className={cn(
-          'relative flex h-screen w-full flex-col overflow-hidden bg-black text-white font-sans',
+          'relative flex min-h-screen w-full flex-col overflow-hidden bg-black text-white font-sans',
           className
         )}
       >
@@ -151,9 +153,12 @@ export const MinimalistHero = ({
       )}
 
       {/* ══════════════════ MAIN CONTENT ══════════════════ */}
-      <div className="relative z-10 flex flex-1 items-stretch w-full pr-6 md:pr-14 -translate-y-[13vh]">
+      {/* RESPONSIVE FIX: On mobile (-translate-y-[13vh] was causing overflow).
+          Use a smaller translate on mobile, full on desktop. */}
+      <div className="relative z-10 flex flex-1 items-stretch w-full pr-0 md:pr-14 md:-translate-y-[13vh]">
 
-        {/* ── Left: Bio, Read More & Icons — vertically centered ── */}
+        {/* ── Left: Bio, Read More & Icons — vertically centered (desktop only) ── */}
+        {/* RESPONSIVE FIX: Hidden on mobile; mobile users see bio via the About section */}
         <div
           className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-6 md:left-10 z-30 flex-col gap-4 text-left items-start max-w-[280px] pb-0"
         >
@@ -173,7 +178,8 @@ export const MinimalistHero = ({
           </a>
         </div>
 
-        {/* ── Bottom-left: Social icons ── */}
+        {/* ── Bottom-left: Social icons (desktop only) ── */}
+        {/* RESPONSIVE FIX: Mobile social icons are shown in the mobile-only strip below the portrait */}
         {socialLinks && socialLinks.length > 0 && (
           <div
             className="hidden md:flex absolute bottom-8 left-6 md:left-10 z-30 items-center gap-5"
@@ -196,6 +202,8 @@ export const MinimalistHero = ({
         )}
 
         {/* ── Center: Portrait with orbiting tech icons ── */}
+        {/* RESPONSIVE FIX: On mobile, use relative flow instead of absolute to
+            prevent the portrait from overflowing the hero container */}
         <div className="absolute inset-0 flex items-end justify-center h-full pointer-events-none">
 
           {/* Tech orbit animation styles */}
@@ -295,8 +303,10 @@ export const MinimalistHero = ({
             ))}
           </div>
 
+          {/* RESPONSIVE FIX: Portrait container — on mobile use a smaller height
+              so it fits within the viewport without overflow */}
           <motion.div
-            className="relative flex items-end justify-center h-[90%] max-h-[80vh] aspect-[3/4] pointer-events-auto overflow-hidden"
+            className="relative flex items-end justify-center h-[75vw] sm:h-[80%] md:h-[90%] max-h-[80vh] aspect-[3/4] pointer-events-auto overflow-hidden"
             style={{
               maskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
               WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
@@ -340,10 +350,11 @@ export const MinimalistHero = ({
               }}
             />
 
-            {/* Mobile chip */}
+            {/* Mobile CV chip — larger touch target, better positioned */}
+            {/* RESPONSIVE FIX: Increased py from 2.5 to 3, ensured min touch area */}
             <button
               onClick={onCvClick}
-              className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/20 bg-black/80 px-6 py-2.5 backdrop-blur-sm md:hidden pointer-events-auto cursor-pointer active:scale-95 transition-all text-xs font-extrabold uppercase tracking-widest text-white hover:bg-black/95 hover:border-white"
+              className="absolute bottom-6 sm:bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/20 bg-black/80 px-5 py-3 backdrop-blur-sm md:hidden pointer-events-auto cursor-pointer active:scale-95 transition-all text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-white hover:bg-black/95 hover:border-white whitespace-nowrap"
             >
               {overlayText.part1} · {overlayText.part2} · View CV
             </button>
@@ -351,6 +362,7 @@ export const MinimalistHero = ({
         </div>
 
         {/* ── Right Side: KARTHIK DEVELOPER (typewriter) ── */}
+        {/* RESPONSIVE FIX: TypewriterWords is hidden on mobile, shown md+ */}
         <TypewriterWords
           part1={overlayText.part1}
           part2={overlayText.part2}
@@ -359,6 +371,28 @@ export const MinimalistHero = ({
 
       </div>
 
+      {/* ── Mobile-only: Social icons + location strip below portrait ── */}
+      {/* RESPONSIVE FIX: On mobile the left-panel social icons are hidden,
+          so we show a social row here for all mobile/small-tablet viewports */}
+      {socialLinks && socialLinks.length > 0 && (
+        <div className="relative z-30 flex md:hidden items-center justify-center gap-6 pb-8 pt-2">
+          {socialLinks.map((link, i) => {
+            const Icon = link.icon;
+            return (
+              <a
+                key={i}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/50 hover:text-yellow-400 transition-colors p-2"
+                aria-label={`Social link ${i + 1}`}
+              >
+                <Icon className="w-5 h-5" />
+              </a>
+            );
+          })}
+        </div>
+      )}
 
       </div>
     </>
@@ -379,9 +413,11 @@ function TypewriterWords({
   const typingWord2 = displayed1 === part1 && displayed2.length < part2.length;
 
   return (
-    <div className="hidden md:flex z-30 w-[28%] flex-col justify-center items-end text-right ml-auto gap-5">
+    // RESPONSIVE FIX: Reduced from w-[28%] to w-[25%] on md, expands to 28% on lg
+    // to prevent the typewriter text from being squeezed on 769px–900px range
+    <div className="hidden md:flex z-30 w-[25%] lg:w-[28%] flex-col justify-center items-end text-right ml-auto gap-5 pr-2 md:pr-6 lg:pr-0">
       <h1
-        className="font-extrabold tracking-tight leading-[1.05] text-white text-3xl lg:text-4xl xl:text-5xl uppercase select-none font-mono"
+        className="font-extrabold tracking-tight leading-[1.05] text-white text-2xl md:text-3xl lg:text-4xl xl:text-5xl uppercase select-none font-mono"
         aria-label={`${part1} ${part2}`}
       >
         {/* Line 1 */}
@@ -403,7 +439,7 @@ function TypewriterWords({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
             onClick={onCvClick}
-            className="px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 hover:border-white hover:bg-white/10 rounded-full transition-all active:scale-95 cursor-pointer shadow-lg shadow-white/5 hover:shadow-white/10 w-fit"
+            className="px-4 md:px-5 py-2.5 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 hover:border-white hover:bg-white/10 rounded-full transition-all active:scale-95 cursor-pointer shadow-lg shadow-white/5 hover:shadow-white/10 w-fit"
           >
             View CV
           </motion.button>

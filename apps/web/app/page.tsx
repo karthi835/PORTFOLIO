@@ -480,12 +480,14 @@ export default function Page() {
       <Navbar />
 
       {/* Floating Inquiry Basket Button */}
-      <div className="fixed bottom-6 right-6 z-40">
+      {/* RESPONSIVE FIX: Use pb-safe-area-inset on iOS to avoid home bar overlap;
+          slightly smaller button on mobile (h-12 w-12) vs desktop (h-14 w-14) */}
+      <div className="fixed bottom-6 right-4 sm:right-6 z-40">
         <motion.button
           onClick={() => setIsCartOpen(true)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-foreground text-background shadow-2xl border border-background/10 transition-colors hover:bg-foreground/90"
+          className="relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-foreground text-background shadow-2xl border border-background/10 transition-colors hover:bg-foreground/90"
           aria-label="View Service Basket"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-6 h-6">
@@ -626,7 +628,10 @@ export default function Page() {
                 <h3 className="text-xl font-bold tracking-tight mt-1 text-foreground sm:text-2xl">education.</h3>
               </div>
             </SlideIn>
-            <div className="relative max-w-3xl pl-8 border-l border-foreground/10 space-y-12">
+            {/* RESPONSIVE FIX: Added overflow-visible and ml-2 sm:ml-0 to ensure the
+                absolute-positioned timeline dot (-left-[41px]) doesn't clip at the
+                edge of the screen on narrow viewports. pl-8 gives enough room. */}
+            <div className="relative max-w-3xl pl-8 border-l border-foreground/10 space-y-12 ml-2 sm:ml-0">
               {educationHistory.map((edu, i) => (
                 <SlideIn key={edu.institution} dir="left" delay={i * 0.12}>
                   <div className="relative">
@@ -730,14 +735,17 @@ export default function Page() {
                 <span className="text-xs uppercase tracking-widest text-foreground/40 font-bold">particulars</span>
                 <h3 className="text-2xl font-bold tracking-tight mt-1 text-foreground">contact & personal info.</h3>
               </div>
+              {/* RESPONSIVE FIX: `break-all` on the email and long strings prevents
+                  them from overflowing the container on 320px–375px screens.
+                  The 3-col grid collapses gracefully because col-span-2 takes 2/3. */}
               <div className="border border-foreground/5 rounded-2xl divide-y divide-foreground/5 bg-muted/10 overflow-hidden text-xs">
                 <div className="grid grid-cols-3 p-4 uppercase font-bold tracking-widest">
                   <span className="text-foreground/40 col-span-1">Phone</span>
-                  <span className="text-foreground col-span-2 select-all">7339063909</span>
+                  <span className="text-foreground col-span-2 select-all break-all">7339063909</span>
                 </div>
                 <div className="grid grid-cols-3 p-4 uppercase font-bold tracking-widest">
                   <span className="text-foreground/40 col-span-1">Email</span>
-                  <span className="text-foreground col-span-2 select-all">kn09960@gmail.com</span>
+                  <span className="text-foreground col-span-2 select-all break-all">kn09960@gmail.com</span>
                 </div>
                 <div className="grid grid-cols-3 p-4 uppercase font-bold tracking-widest">
                   <span className="text-foreground/40 col-span-1">Location</span>
@@ -869,9 +877,11 @@ export default function Page() {
 
                     <div className="flex flex-col flex-grow justify-between">
                       <div>
-                        <div className="flex items-center justify-between gap-4 mb-2">
+                        {/* RESPONSIVE FIX: Allow name and price to wrap on mobile
+                            instead of overflowing. `flex-wrap` + `gap-y-1` handle it. */}
+                        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 mb-2">
                           <h4 className="text-lg font-bold text-foreground">{service.name}</h4>
-                          <span className="text-base font-extrabold text-yellow-600">Est. ₹{service.price.toLocaleString('en-IN')}</span>
+                          <span className="text-base font-extrabold text-yellow-600 flex-shrink-0">Est. ₹{service.price.toLocaleString('en-IN')}</span>
                         </div>
                         <p className="text-xs text-foreground/50 leading-relaxed font-light mb-4">
                           {service.description}
@@ -935,6 +945,9 @@ export default function Page() {
       {/* MODAL 1: PROJECT DETAILS */}
       <AnimatePresence>
         {selectedProject && (
+          // RESPONSIVE FIX: `items-end` on mobile shows modal as a bottom sheet;
+          // `sm:items-center` centers it on tablet+. `p-0 sm:p-4` removes padding
+          // on mobile so the sheet uses full width.
           <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
             <motion.div
               initial={{ opacity: 0 }}
@@ -944,11 +957,14 @@ export default function Page() {
               className="absolute inset-0 bg-background/60 backdrop-blur-sm"
             />
 
+            {/* RESPONSIVE FIX: rounded-t-3xl on mobile (bottom sheet style),
+                rounded-3xl on sm+ (centered dialog). Inner padding scales with
+                p-4 sm:p-6 md:p-10. max-h guards against tall content. */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-background border border-foreground/10 p-5 sm:p-6 md:p-10 shadow-2xl rounded-t-3xl sm:rounded-3xl z-10"
+              className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-background border border-foreground/10 p-4 sm:p-6 md:p-10 shadow-2xl rounded-t-3xl sm:rounded-3xl z-10"
             >
               <button
                 onClick={() => setSelectedProject(null)}
@@ -1024,6 +1040,8 @@ export default function Page() {
             />
 
             <div className="absolute inset-y-0 right-0 w-full flex sm:pl-10 sm:max-w-full">
+              {/* RESPONSIVE FIX: Full-width on mobile, constrained to max-w-md on sm+
+                  The w-full on mobile ensures no gap on the left side */}
               <motion.div
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}

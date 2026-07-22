@@ -17,6 +17,16 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // RESPONSIVE FIX: Auto-close mobile menu when viewport reaches desktop width
+  // (e.g., user rotates tablet from portrait to landscape)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setIsOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const navLinks = [
     { label: 'HOME', href: '#home' },
     { label: 'PROJECTS', href: '#projects' },
@@ -25,15 +35,18 @@ export const Navbar = () => {
   ];
 
   return (
+    // RESPONSIVE FIX: Header is shorter on mobile (h-16/h-20) vs desktop (h-20/h-24)
+    // to free up vertical space on small screens
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
-      isScrolled 
-        ? "border-b border-foreground/5 bg-background/80 backdrop-blur-md h-20" 
-        : "bg-transparent h-24"
+      isScrolled
+        ? "border-b border-foreground/5 bg-background/80 backdrop-blur-md h-16 sm:h-20"
+        : "bg-transparent h-20 sm:h-24"
     )}>
-      <div className="flex h-full w-full items-center justify-between px-6 md:px-14">
-        {/* Logo */}
-        <Link href="#home" className="text-xl font-bold tracking-wider text-foreground hover:opacity-80 transition-opacity">
+      {/* RESPONSIVE FIX: Smaller horizontal padding on mobile (px-4) vs desktop (px-14) */}
+      <div className="flex h-full w-full items-center justify-between px-4 sm:px-6 md:px-14">
+        {/* Logo — scales from text-base on 320px to text-xl on sm+ */}
+        <Link href="#home" className="text-base sm:text-xl font-bold tracking-wider text-foreground hover:opacity-80 transition-opacity">
           KARTHIKEYAN
         </Link>
 
@@ -50,11 +63,12 @@ export const Navbar = () => {
           ))}
         </nav>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex flex-col space-y-1.5 md:hidden z-50 p-2"
+          className="flex flex-col space-y-1.5 md:hidden z-50 p-2 -mr-1"
           aria-label="Toggle menu"
+          aria-expanded={isOpen}
         >
           <motion.span
             animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
@@ -75,6 +89,9 @@ export const Navbar = () => {
       </div>
 
       {/* Mobile Drawer Menu */}
+      {/* RESPONSIVE FIX: `top-full` dynamically positions drawer directly below the
+          header regardless of whether it is h-16, h-20, or h-24. The old static
+          `top-20` caused a 4px gap when header was h-24 on initial load. */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -82,9 +99,9 @@ export const Navbar = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="absolute left-0 right-0 top-20 border-b border-foreground/5 bg-background px-6 pb-8 pt-4 md:hidden z-40 overflow-hidden shadow-lg"
+            className="absolute left-0 right-0 top-full border-b border-foreground/5 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 md:hidden z-40 overflow-hidden shadow-lg"
           >
-            <nav className="flex flex-col space-y-4">
+            <nav className="flex flex-col space-y-1">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.label}
@@ -95,7 +112,7 @@ export const Navbar = () => {
                   <a
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="block text-lg font-medium tracking-widest py-2 border-l-2 pl-4 border-transparent text-foreground/60 hover:text-foreground hover:border-yellow-400 transition-all"
+                    className="block text-lg font-medium tracking-widest py-3 border-l-2 pl-4 border-transparent text-foreground/60 hover:text-foreground hover:border-yellow-400 transition-all"
                   >
                     {link.label}
                   </a>

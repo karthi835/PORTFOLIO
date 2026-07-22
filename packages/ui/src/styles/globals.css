@@ -122,10 +122,18 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
+
+  /* ── Responsive base: prevent horizontal overflow on all screen sizes ── */
+  html,
+  body {
+    overflow-x: hidden;
+    /* Ensure smooth scrolling works with sticky navbar */
+    scroll-padding-top: 5rem;
+  }
 }
 
 /* Page Background Texture (applied to all sections except home) */
@@ -134,8 +142,27 @@ footer {
   background-image: url('/bg-texture.png') !important;
   background-size: cover;
   background-repeat: repeat;
-  background-attachment: fixed;
+  /* RESPONSIVE FIX: 'fixed' causes iOS Safari rendering glitches on mobile.
+     Use 'scroll' on mobile and 'fixed' only on larger screens. */
+  background-attachment: scroll;
   background-position: center;
+}
+
+/* Re-enable fixed attachment on non-touch devices (tablet/desktop) */
+@media (min-width: 768px) and (hover: hover) {
+  section,
+  footer {
+    background-attachment: fixed;
+  }
+}
+
+/* Hide scrollbar utility used in project filter and cart */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 #printable-cv-content section {
