@@ -17,40 +17,63 @@ export const Navbar: React.FC<NavbarProps> = ({ forceMobile }) => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // RESPONSIVE FIX: Auto-close mobile menu when viewport reaches desktop width
-  // (e.g., user rotates tablet from portrait to landscape)
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) setIsOpen(false);
+      if (window.innerWidth >= 768 && !forceMobile) setIsOpen(false);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [forceMobile]);
 
   const navLinks = [
     { label: 'HOME', href: '#home' },
+    { label: 'ABOUT ME', href: '#about' },
     { label: 'PROJECTS', href: '#projects' },
     { label: 'SERVICES', href: '#services' },
-    { label: 'ABOUT ME', href: '#about' },
+    { label: 'CONTACT', href: '#contact' },
   ];
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsOpen(false);
+
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+
+    if (element) {
+      setTimeout(() => {
+        const headerOffset = 70;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }, 50);
+    }
+  };
+
   return (
-    // RESPONSIVE FIX: Header is shorter on mobile (h-16/h-20) vs desktop (h-20/h-24)
-    // to free up vertical space on small screens
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
-      isScrolled
-        ? "border-b border-foreground/5 bg-background/80 backdrop-blur-md h-16 sm:h-20"
+      isScrolled || isOpen
+        ? "border-b border-foreground/10 bg-background/95 backdrop-blur-md h-16 sm:h-20"
         : "bg-transparent h-20 sm:h-24"
     )}>
-      {/* RESPONSIVE FIX: Smaller horizontal padding on mobile (px-4) vs desktop (px-14) */}
       <div className="flex h-full w-full items-center justify-between px-4 sm:px-6 md:px-14">
-        {/* Logo — scales from text-base on 320px to text-xl on sm+ */}
-        <Link href="#home" className="text-base sm:text-xl font-bold tracking-wider text-foreground hover:opacity-80 transition-opacity">
+        {/* Logo */}
+        <Link
+          href="#home"
+          onClick={(e) => handleNavClick(e, '#home')}
+          className="text-base sm:text-xl font-bold tracking-wider text-foreground hover:opacity-80 transition-opacity cursor-pointer"
+        >
           KARTHIKEYAN
         </Link>
 
@@ -60,7 +83,8 @@ export const Navbar: React.FC<NavbarProps> = ({ forceMobile }) => {
             <a
               key={link.label}
               href={link.href}
-              className="relative text-sm font-medium tracking-widest text-foreground/60 hover:text-foreground transition-colors py-2"
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="relative text-sm font-medium tracking-widest text-foreground/60 hover:text-foreground transition-colors py-2 cursor-pointer"
             >
               {link.label}
             </a>
@@ -70,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({ forceMobile }) => {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={forceMobile ? "flex flex-col space-y-1.5 z-50 p-2 -mr-1" : "flex flex-col space-y-1.5 md:hidden z-50 p-2 -mr-1"}
+          className={forceMobile ? "flex flex-col space-y-1.5 z-50 p-2 -mr-1 cursor-pointer" : "flex flex-col space-y-1.5 md:hidden z-50 p-2 -mr-1 cursor-pointer"}
           aria-label="Toggle menu"
           aria-expanded={isOpen}
         >
@@ -92,37 +116,50 @@ export const Navbar: React.FC<NavbarProps> = ({ forceMobile }) => {
         </button>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu & Backdrop */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className={forceMobile ? "absolute left-0 right-0 top-full border-b border-foreground/5 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 z-40 overflow-hidden shadow-lg" : "absolute left-0 right-0 top-full border-b border-foreground/5 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 md:hidden z-40 overflow-hidden shadow-lg"}
-          >
-            <nav className="flex flex-col space-y-1">
-              {navLinks.map((link, i) => (
-                <motion.div
-                  key={link.label}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <a
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block text-lg font-medium tracking-widest py-3 border-l-2 pl-4 border-transparent text-foreground/60 hover:text-foreground hover:border-yellow-400 transition-all"
+          <>
+            {/* Clickable backdrop overlay to close menu on outside tap */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setIsOpen(false)}
+              className={forceMobile ? "fixed inset-0 bg-black/40 backdrop-blur-xs z-30" : "fixed inset-0 bg-black/40 backdrop-blur-xs z-30 md:hidden"}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className={forceMobile ? "absolute left-0 right-0 top-full border-b border-foreground/10 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 z-40 overflow-hidden shadow-xl" : "absolute left-0 right-0 top-full border-b border-foreground/10 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 md:hidden z-40 overflow-hidden shadow-xl"}
+            >
+              <nav className="flex flex-col space-y-1">
+                {navLinks.map((link, i) => (
+                  <motion.div
+                    key={link.label}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    {link.label}
-                  </a>
-                </motion.div>
-              ))}
-            </nav>
-          </motion.div>
+                    <a
+                      href={link.href}
+                      onClick={(e) => handleNavClick(e, link.href)}
+                      className="block text-lg font-medium tracking-widest py-3 border-l-2 pl-4 border-transparent text-foreground/70 hover:text-foreground hover:border-yellow-400 transition-all cursor-pointer"
+                    >
+                      {link.label}
+                    </a>
+                  </motion.div>
+                ))}
+              </nav>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
   );
 };
+
