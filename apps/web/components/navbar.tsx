@@ -5,7 +5,11 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@workspace/ui/lib/utils";
 
-export const Navbar = () => {
+interface NavbarProps {
+  forceMobile?: boolean;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ forceMobile }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -51,7 +55,7 @@ export const Navbar = () => {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center space-x-8 md:flex">
+        <nav className={forceMobile ? "hidden" : "hidden items-center space-x-8 md:flex"}>
           {navLinks.map((link) => (
             <a
               key={link.label}
@@ -66,7 +70,7 @@ export const Navbar = () => {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex flex-col space-y-1.5 md:hidden z-50 p-2 -mr-1"
+          className={forceMobile ? "flex flex-col space-y-1.5 z-50 p-2 -mr-1" : "flex flex-col space-y-1.5 md:hidden z-50 p-2 -mr-1"}
           aria-label="Toggle menu"
           aria-expanded={isOpen}
         >
@@ -89,9 +93,6 @@ export const Navbar = () => {
       </div>
 
       {/* Mobile Drawer Menu */}
-      {/* RESPONSIVE FIX: `top-full` dynamically positions drawer directly below the
-          header regardless of whether it is h-16, h-20, or h-24. The old static
-          `top-20` caused a 4px gap when header was h-24 on initial load. */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -99,7 +100,7 @@ export const Navbar = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="absolute left-0 right-0 top-full border-b border-foreground/5 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 md:hidden z-40 overflow-hidden shadow-lg"
+            className={forceMobile ? "absolute left-0 right-0 top-full border-b border-foreground/5 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 z-40 overflow-hidden shadow-lg" : "absolute left-0 right-0 top-full border-b border-foreground/5 bg-background/95 backdrop-blur-md px-4 sm:px-6 pb-8 pt-4 md:hidden z-40 overflow-hidden shadow-lg"}
           >
             <nav className="flex flex-col space-y-1">
               {navLinks.map((link, i) => (

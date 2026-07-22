@@ -17,6 +17,7 @@ interface MinimalistHeroProps {
   locationText: string;
   className?: string;
   onCvClick?: () => void;
+  forceMobile?: boolean;
 }
 
 /* ─────────────────────── motion presets ────────────────────── */
@@ -100,6 +101,7 @@ export const MinimalistHero = ({
   locationText,
   className,
   onCvClick,
+  forceMobile,
 }: MinimalistHeroProps) => {
   return (
     <>
@@ -156,7 +158,7 @@ export const MinimalistHero = ({
 
         {/* ── Left: Bio, Read More & Icons — vertically centered (desktop only) ── */}
         <div
-          className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-6 md:left-10 lg:left-14 xl:left-20 z-30 flex-col gap-4 text-left items-start max-w-[280px] lg:max-w-[310px] pb-0"
+          className={forceMobile ? "hidden" : "hidden md:flex absolute top-1/2 -translate-y-1/2 left-6 md:left-10 lg:left-14 xl:left-20 z-30 flex-col gap-4 text-left items-start max-w-[280px] lg:max-w-[310px] pb-0"}
         >
           {/* Bio text */}
           <p
@@ -177,7 +179,7 @@ export const MinimalistHero = ({
         {/* ── Bottom-left: Social icons (desktop only) ── */}
         {socialLinks && socialLinks.length > 0 && (
           <div
-            className="hidden md:flex absolute bottom-8 left-6 md:left-10 z-30 items-center gap-5"
+            className={forceMobile ? "hidden" : "hidden md:flex absolute bottom-8 left-6 md:left-10 z-30 items-center gap-5"}
           >
             {socialLinks.map((link, i) => {
               const Icon = link.icon;
@@ -217,7 +219,7 @@ export const MinimalistHero = ({
 
           {/* Orbiting icons layer — behind portrait (desktop only) */}
           <div
-            className="absolute pointer-events-none z-0 hidden md:block"
+            className={forceMobile ? "hidden" : "absolute pointer-events-none z-0 hidden md:block"}
             style={{
               left: '50%',
               top: '50%',
@@ -350,10 +352,11 @@ export const MinimalistHero = ({
           part1={overlayText.part1}
           part2={overlayText.part2}
           onCvClick={onCvClick}
+          forceMobile={forceMobile}
         />
 
         {/* ── Mobile-only: Heading + View CV button below portrait ── */}
-        <div className="md:hidden absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-6 px-6 z-30">
+        <div className={forceMobile ? "absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-6 px-6 z-30" : "md:hidden absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-6 px-6 z-30"}>
           <h1 className="font-extrabold tracking-tight leading-tight text-white text-2xl uppercase text-center font-mono select-none">
             <span className="block">{overlayText.part1}</span>
             <span className="block">{overlayText.part2}</span>
@@ -370,7 +373,7 @@ export const MinimalistHero = ({
 
       {/* ── Mobile-only: Social icons strip directly below image ── */}
       {socialLinks && socialLinks.length > 0 && (
-        <div className="relative z-30 flex md:hidden items-center justify-center gap-6 pb-6 pt-2">
+        <div className={forceMobile ? "relative z-30 flex items-center justify-center gap-6 pb-6 pt-2" : "relative z-30 flex md:hidden items-center justify-center gap-6 pb-6 pt-2"}>
           {socialLinks.map((link, i) => {
             const Icon = link.icon;
             return (
@@ -399,15 +402,17 @@ function TypewriterWords({
   part1,
   part2,
   onCvClick,
+  forceMobile,
 }: {
   part1: string;
   part2: string;
   onCvClick?: () => void;
+  forceMobile?: boolean;
 }) {
   const { displayed1, displayed2, done } = useTypewriter([part1, part2], 95, 320);
 
   return (
-    <div className="hidden md:flex z-30 w-[25%] lg:w-[26%] xl:w-[28%] flex-col justify-center items-end text-right ml-auto gap-5 pr-2 md:pr-6 lg:pr-10 xl:pr-14">
+    <div className={forceMobile ? "hidden" : "hidden md:flex z-30 w-[25%] lg:w-[26%] xl:w-[28%] flex-col justify-center items-end text-right ml-auto gap-5 pr-2 md:pr-6 lg:pr-10 xl:pr-14"}>
       <h1
         className="font-extrabold tracking-tight leading-[1.05] text-white text-2xl md:text-3xl lg:text-4xl xl:text-5xl uppercase select-none font-mono"
         aria-label={`${part1} ${part2}`}

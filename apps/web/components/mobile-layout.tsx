@@ -1,13 +1,40 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React from 'react';
+import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { MinimalistHero } from '@workspace/ui/components/minimalist-hero';
 import { CVModal } from '@/components/cv-modal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@workspace/ui/lib/utils";
 import { LogosSlider } from "@/components/ui/demo";
 import { DesktopLayoutProps } from './desktop-layout';
+
+type SlideDir = 'up' | 'left' | 'right';
+const SlideIn = ({
+  children,
+  dir = 'up',
+  delay = 0,
+  className,
+}: {
+  children: React.ReactNode;
+  dir?: SlideDir;
+  delay?: number;
+  className?: string;
+}) => {
+  const offset = dir === 'up' ? { y: 48 } : dir === 'left' ? { x: -48 } : { x: 48 };
+  return (
+    <motion.div
+      initial={{ opacity: 0, ...offset }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export const MobileLayout: React.FC<DesktopLayoutProps> = ({
   socialLinks,
@@ -44,83 +71,12 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
   handleBookingSubmit,
   WhatsAppIcon,
 }) => {
-  const [isNavOpen, setIsNavOpen] = useState(false);
-
-  const navLinks = [
-    { label: 'HOME', href: '#home' },
-    { label: 'PROJECTS', href: '#projects' },
-    { label: 'SERVICES', href: '#services' },
-    { label: 'ABOUT ME', href: '#about' },
-  ];
-
   return (
     <div className="relative min-h-screen bg-background font-sans text-foreground overflow-x-hidden">
-      {/* ── FORCED MOBILE NAVBAR ────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 w-full border-b border-foreground/5 bg-background/95 backdrop-blur-md h-16 transition-all duration-300">
-        <div className="flex h-full w-full items-center justify-between px-4">
-          <Link href="#home" className="text-lg font-bold tracking-wider text-foreground hover:opacity-80 transition-opacity">
-            KARTHIKEYAN
-          </Link>
+      {/* Forced Mobile Navigation Header */}
+      <Navbar forceMobile={true} />
 
-          {/* Mobile Hamburger Button — ALWAYS rendered in MobileLayout regardless of viewport width */}
-          <button
-            onClick={() => setIsNavOpen(!isNavOpen)}
-            className="flex flex-col space-y-1.5 z-50 p-2 -mr-1"
-            aria-label="Toggle mobile menu"
-            aria-expanded={isNavOpen}
-          >
-            <motion.span
-              animate={isNavOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="block h-0.5 w-6 bg-foreground"
-            />
-            <motion.span
-              animate={isNavOpen ? { opacity: 0 } : { opacity: 1 }}
-              transition={{ duration: 0.2 }}
-              className="block h-0.5 w-6 bg-foreground"
-            />
-            <motion.span
-              animate={isNavOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="block h-0.5 w-5 bg-foreground align-right self-end"
-            />
-          </button>
-        </div>
-
-        {/* Mobile Navigation Drawer */}
-        <AnimatePresence>
-          {isNavOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="absolute left-0 right-0 top-full border-b border-foreground/5 bg-background/95 backdrop-blur-md px-6 pb-8 pt-4 z-40 overflow-hidden shadow-lg"
-            >
-              <nav className="flex flex-col space-y-1">
-                {navLinks.map((link, i) => (
-                  <motion.div
-                    key={link.label}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <a
-                      href={link.href}
-                      onClick={() => setIsNavOpen(false)}
-                      className="block text-lg font-medium tracking-widest py-3 border-l-2 pl-4 border-transparent text-foreground/60 hover:text-foreground hover:border-yellow-400 transition-all"
-                    >
-                      {link.label}
-                    </a>
-                  </motion.div>
-                ))}
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
-
-      {/* ── FLOATING BASKET BUTTON ────────────────────────────────────── */}
+      {/* Floating Inquiry Basket Button */}
       <div className="fixed bottom-6 right-4 z-40">
         <motion.button
           onClick={() => setIsCartOpen(true)}
@@ -150,171 +106,168 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
         </motion.button>
       </div>
 
-      {/* ── FORCED MOBILE HERO SECTION ────────────────────────────────── */}
-      <div id="home" className="relative bg-black text-white px-4 pt-8 pb-12 overflow-hidden flex flex-col items-center text-center">
-        {/* Subtle background glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.15),transparent_70%)] pointer-events-none" />
-
-        {/* Profile Image Frame */}
-        <div className="relative w-36 h-36 rounded-full overflow-hidden border-2 border-yellow-400/40 shadow-2xl mb-6 flex-shrink-0">
-          <img src="/profile.png" alt="Karthikeyan N" className="w-full h-full object-cover" />
-        </div>
-
-        {/* Name & Title */}
-        <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2">
-          KARTHIKEYAN N
-        </h1>
-        <span className="inline-block px-3 py-1 bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-bold uppercase tracking-widest rounded-full mb-4">
-          Software Developer
-        </span>
-
-        {/* Bio summary */}
-        <p className="text-xs text-white/70 leading-relaxed font-light max-w-sm mb-6">
-          Motivated Computer Science Engineering student (2023–2027) with a strong foundation in programming, data structures, and full-stack web development. Eager to apply academic knowledge to real-world problems.
-        </p>
-
-        {/* CV & Location Buttons */}
-        <div className="flex flex-col w-full max-w-xs gap-3 mb-6">
-          <button
-            onClick={() => setIsCvOpen(true)}
-            className="w-full py-3.5 bg-yellow-400 text-black text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-yellow-300 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-            </svg>
-            Curriculum Vitae (CV)
-          </button>
-          <span className="text-[11px] text-white/50 font-medium tracking-wide">
-            📍 Cuddalore – 607302
-          </span>
-        </div>
-
-        {/* Social Links Row */}
-        <div className="flex items-center justify-center gap-4">
-          {socialLinks.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <a
-                key={i}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-10 w-10 rounded-full border border-white/20 bg-white/5 flex items-center justify-center text-white/80 hover:text-white hover:border-yellow-400 hover:bg-yellow-400/10 transition-all"
-              >
-                <Icon className="w-4 h-4" />
-              </a>
-            );
-          })}
+      {/* 1. HERO SECTION */}
+      <div id="home" className="relative overflow-hidden bg-black">
+        <div className="relative z-20">
+          <MinimalistHero
+            forceMobile={true}
+            className="bg-transparent"
+            logoText="KARTHIKEYAN"
+            navLinks={[]}
+            mainText="Motivated Computer Science Engineering student (2023–2027) with a strong foundation in programming, data structures, and full-stack web development. Eager to apply academic knowledge to real-world problems through internships or entry-level roles."
+            readMoreLink="#about"
+            imageSrc="/profile.png"
+            imageAlt="Karthikeyan N Portrait"
+            overlayText={{
+              part1: 'karthik',
+              part2: 'Developer',
+            }}
+            socialLinks={socialLinks}
+            locationText="Cuddalore – 607302"
+            onCvClick={() => setIsCvOpen(true)}
+          />
         </div>
       </div>
 
-      {/* Logos Slider */}
-      <div className="bg-black py-6 border-t border-white/10">
-        <div className="w-full px-4">
+      {/* Logos slider */}
+      <div className="relative z-30 bg-black pt-8 pb-4">
+        <div className="relative max-w-7xl mx-auto w-full px-4">
           <LogosSlider />
         </div>
       </div>
 
-      {/* ── ABOUT ME SECTION ───────────────────────────────────────────── */}
-      <section id="about" className="py-10 px-4 bg-background">
-        <div className="w-full space-y-12">
-          {/* Profile Summary */}
-          <div>
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Profile Summary</span>
-            <h2 className="text-2xl font-extrabold tracking-tight text-foreground mt-1 mb-3">About Me</h2>
-            <p className="text-xs text-foreground/75 leading-relaxed font-light mb-3">
-              Motivated Computer Science Engineering student (2023–2027) with a strong foundation in programming, data structures, and full-stack web development. Eager to apply academic knowledge to real-world problems through internships or entry-level roles.
-            </p>
-            <p className="text-xs text-foreground/75 leading-relaxed font-light">
-              Passionate about AI, machine learning, and web technologies. Proven ability to work productively in teams, adapt quickly to new workflows, and deliver solutions effectively.
-            </p>
+      {/* Smooth transition from black to page background */}
+      <div className="h-16 bg-gradient-to-b from-black to-background relative z-30" />
+
+      {/* 2. ABOUT ME SECTION */}
+      <section id="about" className="py-10 bg-background relative z-20">
+        <div className="max-w-7xl mx-auto w-full px-4 space-y-12">
+
+          {/* Intro Story */}
+          <div className="flex flex-col gap-4">
+            <SlideIn dir="left">
+              <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">profile summary</span>
+              <h2 className="text-3xl font-extrabold tracking-tight mt-1 mb-2 text-foreground">
+                about me.
+              </h2>
+            </SlideIn>
+            <SlideIn dir="right" delay={0.1} className="text-foreground/75 leading-relaxed text-sm space-y-3 font-light">
+              <p>
+                Motivated Computer Science Engineering student (2023–2027) with a strong foundation in programming, data structures, and full-stack web development. Eager to apply academic knowledge to real-world problems through internships or entry-level roles.
+              </p>
+              <p>
+                Passionate about AI, machine learning, and web technologies. Proven ability to work productively in teams, adapt quickly to new workflows, and deliver solutions effectively.
+              </p>
+            </SlideIn>
           </div>
 
           {/* Internships Timeline */}
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Professional Training</span>
-            <h3 className="text-xl font-bold tracking-tight text-foreground mt-1 mb-4">Internships</h3>
-            <div className="flex flex-col gap-4">
-              {workExperiences.map((exp) => (
-                <div key={exp.company} className="border border-foreground/5 bg-muted/10 p-4 rounded-2xl">
-                  <div className="flex justify-between items-start mb-2 gap-2">
-                    <div>
-                      <h4 className="text-sm font-bold text-foreground">{exp.role}</h4>
-                      <p className="text-xs font-semibold text-yellow-600 mt-0.5">{exp.company}</p>
+            <SlideIn dir="up">
+              <div className="mb-6">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">professional training</span>
+                <h3 className="text-xl font-bold tracking-tight mt-0.5 text-foreground">internships.</h3>
+              </div>
+            </SlideIn>
+            <div className="flex flex-col gap-5">
+              {workExperiences.map((exp, i) => (
+                <SlideIn key={exp.company} dir="up" delay={i * 0.1}>
+                  <div className="border border-foreground/5 bg-muted/10 p-5 rounded-3xl h-full">
+                    <div className="flex justify-between items-start mb-3 gap-2">
+                      <div className="min-w-0">
+                        <h4 className="text-base font-bold text-foreground">{exp.role}</h4>
+                        <p className="text-xs font-semibold text-yellow-600 mt-0.5">{exp.company}</p>
+                      </div>
+                      <span className="flex-shrink-0 px-2.5 py-0.5 border border-yellow-400/20 bg-yellow-400/5 text-[9px] uppercase font-bold tracking-wider rounded text-yellow-600">
+                        {exp.type}
+                      </span>
                     </div>
-                    <span className="px-2 py-0.5 border border-yellow-400/20 bg-yellow-400/5 text-[9px] uppercase font-bold tracking-wider rounded text-yellow-600">
-                      {exp.type}
-                    </span>
+                    <ul className="text-xs text-foreground/60 space-y-1.5 list-disc pl-4 leading-relaxed font-light">
+                      {exp.points.map((pt, idx) => <li key={idx}>{pt}</li>)}
+                    </ul>
                   </div>
-                  <ul className="text-xs text-foreground/60 space-y-1.5 list-disc pl-4 leading-relaxed font-light">
-                    {exp.points.map((pt, idx) => <li key={idx}>{pt}</li>)}
-                  </ul>
-                </div>
+                </SlideIn>
               ))}
             </div>
           </div>
 
           {/* Education Timeline */}
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Academic Journey</span>
-            <h3 className="text-xl font-bold tracking-tight text-foreground mt-1 mb-4">Education</h3>
+            <SlideIn dir="up">
+              <div className="mb-6">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">academic journey</span>
+                <h3 className="text-xl font-bold tracking-tight mt-0.5 text-foreground">education.</h3>
+              </div>
+            </SlideIn>
             <div className="relative pl-6 border-l border-foreground/10 space-y-8 ml-2">
-              {educationHistory.map((edu) => (
-                <div key={edu.institution} className="relative">
-                  <div className="absolute -left-[31px] top-1 h-5 w-5 rounded-full bg-background border border-foreground/20 flex items-center justify-center">
-                    <div className="h-2 w-2 rounded-full bg-yellow-400" />
+              {educationHistory.map((edu, i) => (
+                <SlideIn key={edu.institution} dir="left" delay={i * 0.1}>
+                  <div className="relative">
+                    <div className="absolute -left-[31px] top-1 h-5 w-5 rounded-full bg-background border border-foreground/20 flex items-center justify-center">
+                      <div className="h-2 w-2 rounded-full bg-yellow-400" />
+                    </div>
+                    <span className="text-[10px] font-extrabold text-yellow-500 uppercase tracking-widest">{edu.period}</span>
+                    <h4 className="text-base font-bold text-foreground mt-0.5">{edu.degree}</h4>
+                    <p className="text-xs font-semibold text-foreground/70 mt-0.5">{edu.institution}</p>
+                    <span className="inline-block mt-2 px-3 py-1 bg-muted text-[10px] font-bold uppercase tracking-wide rounded-md border border-foreground/5">
+                      {edu.grade}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-extrabold text-yellow-500 uppercase tracking-widest">{edu.period}</span>
-                  <h4 className="text-sm font-bold text-foreground mt-0.5">{edu.degree}</h4>
-                  <p className="text-xs font-semibold text-foreground/70">{edu.institution}</p>
-                  <span className="inline-block mt-1.5 px-2.5 py-0.5 bg-muted text-[10px] font-bold uppercase tracking-wide rounded border border-foreground/5">
-                    {edu.grade}
-                  </span>
-                </div>
+                </SlideIn>
               ))}
             </div>
           </div>
 
-          {/* Technical Skills */}
+          {/* Skills Grid */}
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Capabilities</span>
-            <h3 className="text-xl font-bold tracking-tight text-foreground mt-1 mb-4">Technical Skills</h3>
+            <SlideIn dir="up">
+              <div className="mb-6">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">capabilities</span>
+                <h3 className="text-xl font-bold tracking-tight mt-0.5 text-foreground">technical skills.</h3>
+              </div>
+            </SlideIn>
             <div className="flex flex-col gap-4">
-              {techSkillsGroups.map((grp) => (
-                <div key={grp.category} className="p-4 border border-foreground/5 bg-muted/10 rounded-2xl">
-                  <h5 className="text-[9px] uppercase font-bold tracking-widest text-foreground/40 mb-2.5">{grp.category}</h5>
-                  <div className="flex flex-wrap gap-1.5">
-                    {grp.skills.map((skill) => (
-                      <span key={skill} className="px-2.5 py-1 bg-background border border-foreground/5 text-xs font-bold uppercase tracking-wider rounded-lg">
-                        {skill}
-                      </span>
-                    ))}
+              {techSkillsGroups.map((grp, i) => (
+                <SlideIn key={grp.category} dir="up" delay={i * 0.08}>
+                  <div className="p-5 border border-foreground/5 bg-muted/10 rounded-2xl">
+                    <h5 className="text-[10px] uppercase font-bold tracking-widest text-foreground/40 mb-3">{grp.category}</h5>
+                    <div className="flex flex-wrap gap-2">
+                      {grp.skills.map((skill) => (
+                        <span key={skill} className="px-3 py-1.5 bg-background border border-foreground/5 text-xs font-bold uppercase tracking-wider rounded-xl">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </SlideIn>
               ))}
             </div>
           </div>
 
-          {/* Interpersonal & Certifications */}
-          <div className="space-y-8">
-            <div>
-              <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Strengths</span>
-              <h3 className="text-xl font-bold tracking-tight text-foreground mt-1 mb-3">Interpersonal Skills</h3>
+          {/* Soft Skills & Certifications */}
+          <div className="flex flex-col gap-8">
+            <SlideIn dir="left">
+              <div className="mb-4">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">strengths</span>
+                <h3 className="text-xl font-bold tracking-tight mt-0.5 text-foreground">interpersonal skills.</h3>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {interpersonalSkills.map((skill) => (
-                  <span key={skill} className="px-3 py-1.5 border border-foreground/5 bg-muted/20 text-xs uppercase font-bold tracking-wider rounded-xl">
+                  <span key={skill} className="px-3.5 py-1.5 border border-foreground/5 bg-muted/20 text-xs uppercase font-bold tracking-widest rounded-xl">
                     {skill}
                   </span>
                 ))}
               </div>
-            </div>
+            </SlideIn>
 
-            <div>
-              <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Credentials</span>
-              <h3 className="text-xl font-bold tracking-tight text-foreground mt-1 mb-3">Certifications</h3>
+            <SlideIn dir="right" delay={0.1}>
+              <div className="mb-4">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">credentials</span>
+                <h3 className="text-xl font-bold tracking-tight mt-0.5 text-foreground">certifications.</h3>
+              </div>
               <div className="space-y-3">
                 {certifications.map((cert) => (
-                  <div key={cert.title} className="p-3.5 border border-foreground/5 bg-muted/10 rounded-xl flex items-center justify-between gap-3">
+                  <div key={cert.title} className="p-4 border border-foreground/5 bg-muted/10 rounded-2xl flex items-center justify-between gap-4">
                     <div>
                       <h4 className="text-xs font-bold text-foreground">{cert.title}</h4>
                       <p className="text-[10px] text-foreground/40 mt-0.5">{cert.provider} — {cert.credential}</p>
@@ -325,177 +278,227 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                   </div>
                 ))}
               </div>
-            </div>
+            </SlideIn>
           </div>
 
-          {/* Particulars & Contact */}
-          <div>
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Particulars</span>
-            <h3 className="text-xl font-bold tracking-tight text-foreground mt-1 mb-3">Contact & Personal Info</h3>
-            <div className="border border-foreground/5 rounded-2xl divide-y divide-foreground/5 bg-muted/10 overflow-hidden text-xs">
-              <div className="flex justify-between p-3.5">
-                <span className="text-foreground/40 font-bold uppercase">Phone</span>
-                <span className="text-foreground font-bold select-all break-all">7339063909</span>
+          {/* Interests & Contact Particulars */}
+          <div className="flex flex-col gap-8">
+            <SlideIn dir="left">
+              <div className="mb-4">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">focus</span>
+                <h3 className="text-xl font-bold tracking-tight mt-0.5 text-foreground">areas of interest.</h3>
               </div>
-              <div className="flex justify-between p-3.5">
-                <span className="text-foreground/40 font-bold uppercase">Email</span>
-                <span className="text-foreground font-bold select-all break-all">kn09960@gmail.com</span>
+              <div className="space-y-2.5">
+                {interests.map((interest) => (
+                  <div key={interest} className="flex items-center gap-3 py-1">
+                    <div className="h-1.5 w-1.5 rounded-full bg-yellow-400" />
+                    <span className="text-xs text-foreground/80 font-medium">{interest}</span>
+                  </div>
+                ))}
               </div>
-              <div className="flex justify-between p-3.5">
-                <span className="text-foreground/40 font-bold uppercase">Location</span>
-                <span className="text-foreground font-bold">Cuddalore – 607302</span>
+            </SlideIn>
+
+            <SlideIn dir="right" delay={0.1}>
+              <div className="mb-4">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">particulars</span>
+                <h3 className="text-xl font-bold tracking-tight mt-0.5 text-foreground">contact & personal info.</h3>
               </div>
-              <div className="flex justify-between p-3.5">
-                <span className="text-foreground/40 font-bold uppercase">Languages</span>
-                <span className="text-foreground font-bold">Tamil, English</span>
+              <div className="border border-foreground/5 rounded-2xl divide-y divide-foreground/5 bg-muted/10 overflow-hidden text-xs">
+                <div className="grid grid-cols-3 p-4 uppercase font-bold tracking-widest">
+                  <span className="text-foreground/40 col-span-1">Phone</span>
+                  <span className="text-foreground col-span-2 select-all break-all">7339063909</span>
+                </div>
+                <div className="grid grid-cols-3 p-4 uppercase font-bold tracking-widest">
+                  <span className="text-foreground/40 col-span-1">Email</span>
+                  <span className="text-foreground col-span-2 select-all break-all">kn09960@gmail.com</span>
+                </div>
+                <div className="grid grid-cols-3 p-4 uppercase font-bold tracking-widest">
+                  <span className="text-foreground/40 col-span-1">Location</span>
+                  <span className="text-foreground col-span-2">Cuddalore – 607302</span>
+                </div>
+                <div className="grid grid-cols-3 p-4 uppercase font-bold tracking-widest">
+                  <span className="text-foreground/40 col-span-1">Languages</span>
+                  <span className="text-foreground col-span-2">Tamil, English (Fluent)</span>
+                </div>
               </div>
-            </div>
+            </SlideIn>
           </div>
+
         </div>
       </section>
 
-      {/* ── PROJECTS SECTION ───────────────────────────────────────────── */}
-      <section id="projects" className="py-10 px-4 border-t border-foreground/5 bg-muted/10">
-        <div className="w-full">
-          <div className="mb-6">
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">My Work</span>
-            <h2 className="text-2xl font-extrabold tracking-tight text-foreground mt-1 mb-2">Projects</h2>
-            <p className="text-xs text-foreground/60 font-light">
-              Showcase of web applications and system designs.
-            </p>
-          </div>
+      {/* 3. PROJECTS SECTION */}
+      <section id="projects" className="py-10 border-t border-foreground/5 bg-muted/10">
+        <div className="max-w-7xl mx-auto w-full px-4">
+          <SlideIn dir="up">
+            <div className="mb-8">
+              <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">my work</span>
+              <h2 className="text-3xl font-extrabold tracking-tight mt-1 mb-2 text-foreground">
+                projects.
+              </h2>
+              <p className="text-xs text-foreground/60 font-light">
+                A showcase of programming applications and system designs. Integrating robust backend APIs with responsive client interfaces.
+              </p>
+            </div>
+          </SlideIn>
 
-          {/* Category Filters */}
-          <div className="border-b border-foreground/5 mb-6 flex space-x-4 overflow-x-auto scrollbar-none pb-2">
+          {/* Category filter tabs */}
+          <div className="border-b border-foreground/5 mb-8 flex space-x-6 overflow-x-auto scrollbar-none pb-2">
             {['all', 'frontend', 'backend'].map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category as any)}
                 className={cn(
-                  "relative text-xs uppercase tracking-widest font-semibold pb-2 transition-colors whitespace-nowrap",
-                  selectedCategory === category ? "text-foreground font-bold" : "text-foreground/40"
+                  "relative text-xs uppercase tracking-widest font-semibold pb-3 transition-colors whitespace-nowrap",
+                  selectedCategory === category ? "text-foreground font-bold" : "text-foreground/40 hover:text-foreground"
                 )}
               >
                 {category === 'all' ? 'All Projects' : category + ' end'}
                 {selectedCategory === category && (
                   <motion.div
-                    layoutId="activeCategoryIndicatorMobile"
-                    className="absolute bottom-0 left-0 h-[2px] w-full bg-yellow-400"
+                    layoutId="activeCategoryIndicatorMobileLayout"
+                    className="absolute bottom-0 left-0 h-[2.5px] w-full bg-yellow-400"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   />
                 )}
               </button>
             ))}
           </div>
 
-          {/* Projects Stack */}
-          <div className="flex flex-col gap-6">
-            {filteredProjects.map((project) => {
-              const ProjectSvg = project.svg;
-              return (
-                <div
-                  key={project.id}
-                  className="border border-foreground/5 bg-background p-4 rounded-2xl shadow-sm flex flex-col justify-between"
-                >
-                  <div className="relative aspect-square w-full bg-muted/10 rounded-xl overflow-hidden mb-4">
-                    <span className="absolute top-2 left-2 bg-background/90 border border-foreground/5 px-2 py-0.5 text-[9px] uppercase font-bold tracking-widest rounded text-foreground/60 z-10">
-                      {project.category}
-                    </span>
-                    <ProjectSvg />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-bold text-foreground">{project.name}</h4>
-                      <p className="text-[11px] text-foreground/50">{project.status}</p>
+          {/* Grid */}
+          <motion.div layout className="flex flex-col gap-6">
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, i) => {
+                const ProjectSvg = project.svg;
+                return (
+                  <motion.div
+                    key={project.id}
+                    layout
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="group relative flex flex-col justify-between overflow-hidden border border-foreground/5 bg-background p-4 transition-all duration-300 rounded-2xl hover:shadow-xl"
+                  >
+                    <div className="relative aspect-square w-full bg-muted/10 rounded-xl overflow-hidden mb-5 transition-transform duration-300 group-hover:scale-[1.02]">
+                      <span className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm border border-foreground/5 px-2.5 py-1 text-[10px] uppercase font-bold tracking-widest rounded-md text-foreground/60 shadow-sm z-10">
+                        {project.category}
+                      </span>
+                      <ProjectSvg />
                     </div>
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className="px-3 py-1.5 rounded-full border border-foreground/10 text-xs font-bold uppercase tracking-wider bg-background text-foreground hover:bg-foreground hover:text-background transition-all"
-                    >
-                      Details
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+
+                    <div className="flex items-center justify-between px-1">
+                      <div>
+                        <h4 className="text-base font-bold text-foreground group-hover:underline decoration-yellow-400 decoration-2 underline-offset-4">
+                          {project.name}
+                        </h4>
+                        <p className="text-xs font-semibold text-foreground/50 mt-1">{project.status}</p>
+                      </div>
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        className="rounded-full border border-foreground/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider bg-background text-foreground hover:bg-foreground hover:text-background hover:border-foreground transition-all shadow-sm"
+                      >
+                        Details
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── SERVICES SECTION ───────────────────────────────────────────── */}
-      <section id="services" className="py-10 px-4 border-t border-foreground/5 bg-background">
-        <div className="w-full">
-          <div className="mb-6">
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Collaborations</span>
-            <h2 className="text-2xl font-extrabold tracking-tight text-foreground mt-1 mb-2">Services</h2>
-            <p className="text-xs text-foreground/60 font-light">
-              Freelance software engineering services.
-            </p>
-          </div>
+      {/* 4. SERVICES SECTION */}
+      <section id="services" className="py-10 border-t border-foreground/5 bg-background">
+        <div className="max-w-7xl mx-auto w-full px-4">
+          <SlideIn dir="up">
+            <div className="mb-8">
+              <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">collaborations</span>
+              <h2 className="text-3xl font-extrabold tracking-tight mt-1 mb-2 text-foreground">
+                services.
+              </h2>
+              <p className="text-xs text-foreground/60 font-light">
+                Freelance engineering support. Hire me to build custom components, design clean Java/Spring REST APIs, or analyze data patterns.
+              </p>
+            </div>
+          </SlideIn>
 
+          {/* Grid */}
           <div className="flex flex-col gap-6">
-            {services.map((service) => {
+            {services.map((service, i) => {
               const ServiceSvg = service.svg;
               return (
-                <div key={service.id} className="border border-foreground/5 bg-muted/10 p-5 rounded-2xl flex flex-col justify-between">
-                  <div className="relative aspect-video w-full bg-background rounded-xl overflow-hidden mb-4 flex items-center justify-center">
-                    <ServiceSvg />
-                  </div>
-
-                  <div className="flex justify-between items-start mb-2 gap-2">
-                    <h4 className="text-base font-bold text-foreground">{service.name}</h4>
-                    <span className="text-sm font-extrabold text-yellow-600 flex-shrink-0">Est. ₹{service.price.toLocaleString('en-IN')}</span>
-                  </div>
-
-                  <p className="text-xs text-foreground/50 leading-relaxed font-light mb-4">
-                    {service.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {service.techStack.map((tech) => (
-                      <span key={tech} className="px-2 py-0.5 bg-background border border-foreground/5 rounded text-[9px] uppercase font-bold tracking-wider text-foreground/75">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => addToCart(service)}
-                    className="w-full py-3 bg-foreground text-background text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-foreground/80 transition-all active:scale-95"
+                <SlideIn key={service.id} dir="up" delay={i * 0.1}>
+                  <div
+                    className="group relative flex flex-col justify-between border border-foreground/5 bg-muted/10 p-5 rounded-3xl transition-all duration-300 hover:bg-muted/20 hover:shadow-xl h-full"
                   >
-                    Add to Inquiry Basket
-                  </button>
-                </div>
+                    <div className="relative aspect-video w-full bg-background rounded-2xl overflow-hidden mb-5 flex items-center justify-center group-hover:scale-[1.01] transition-transform duration-300">
+                      <ServiceSvg />
+                    </div>
+
+                    <div className="flex flex-col flex-grow justify-between">
+                      <div>
+                        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 mb-2">
+                          <h4 className="text-base font-bold text-foreground">{service.name}</h4>
+                          <span className="text-sm font-extrabold text-yellow-600 flex-shrink-0">Est. ₹{service.price.toLocaleString('en-IN')}</span>
+                        </div>
+                        <p className="text-xs text-foreground/50 leading-relaxed font-light mb-4">
+                          {service.description}
+                        </p>
+                        <div className="flex flex-wrap gap-1.5 mb-5">
+                          {service.techStack.map((tech) => (
+                            <span key={tech} className="px-2 py-0.5 bg-background border border-foreground/5 rounded text-[9px] uppercase font-bold tracking-wider text-foreground/75">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => addToCart(service)}
+                        className="w-full py-3 bg-foreground text-background text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-foreground/80 transition-all active:translate-y-px"
+                      >
+                        Add to Inquiry Basket
+                      </button>
+                    </div>
+                  </div>
+                </SlideIn>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* ── CONTACT SECTION ────────────────────────────────────────────── */}
-      <section id="contact" className="py-10 px-4 border-t border-foreground/5 bg-muted/10">
-        <div className="w-full border border-foreground/5 bg-background p-6 rounded-2xl text-center">
-          <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">Connect</span>
-          <h3 className="text-xl font-bold text-foreground mt-1 mb-2">Get in Touch</h3>
-          <p className="text-xs text-foreground/50 font-light mb-5">Have an internship offer or freelance inquiry? Chat directly on WhatsApp.</p>
+      {/* 5. DECLARATION & CONTACT SECTION */}
+      <section className="py-10 border-t border-foreground/5 bg-muted/10">
+        <div className="max-w-7xl mx-auto w-full px-4">
+          <SlideIn dir="up">
+            <div id="contact" className="border border-foreground/5 bg-background p-6 rounded-3xl shadow-sm text-center">
+              <div className="mb-6">
+                <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">connect</span>
+                <h3 className="text-2xl font-bold tracking-tight mt-1 mb-2 text-foreground">get in touch.</h3>
+                <p className="text-xs text-foreground/50 font-light">Have an internship offer or freelance inquiry? Let's chat directly on WhatsApp.</p>
+              </div>
 
-          <a
-            href="https://wa.me/917339063909"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-[#25D366] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 w-full"
-          >
-            <WhatsAppIcon className="w-4 h-4" />
-            Message on WhatsApp
-          </a>
+              <a
+                href="https://wa.me/917339063909"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-3 px-6 py-3.5 bg-[#25D366] hover:bg-[#20ba56] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:translate-y-px w-full"
+              >
+                <WhatsAppIcon className="w-5 h-5" />
+                Message on WhatsApp
+              </a>
+            </div>
+          </SlideIn>
         </div>
       </section>
 
       {/* FOOTER */}
       <Footer />
 
-      {/* ── MODALS ────────────────────────────────────────────────────── */}
-      {/* Project Details Modal */}
+      {/* MODAL 1: PROJECT DETAILS */}
       <AnimatePresence>
         {selectedProject && (
           <div className="fixed inset-0 z-50 flex items-end justify-center p-0">
@@ -508,14 +511,14 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
             />
 
             <motion.div
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              className="relative w-full max-h-[90vh] overflow-y-auto bg-background border-t border-foreground/10 p-5 shadow-2xl rounded-t-3xl z-10"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-h-[92vh] overflow-y-auto bg-background border border-foreground/10 p-5 shadow-2xl rounded-t-3xl z-10"
             >
               <button
                 onClick={() => setSelectedProject(null)}
-                className="absolute top-4 right-4 rounded-full p-2 text-foreground/60 hover:bg-muted"
+                className="absolute top-4 right-4 rounded-full hover:bg-muted p-2 text-foreground/60 hover:text-foreground transition-colors z-20"
                 aria-label="Close modal"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
@@ -523,54 +526,58 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                 </svg>
               </button>
 
-              <div className="relative aspect-square w-full bg-muted/30 rounded-xl overflow-hidden flex items-center justify-center mb-4">
-                {selectedProject.svg()}
-              </div>
+              <div className="grid grid-cols-1 gap-6 items-center">
+                <div className="relative aspect-square w-full bg-muted/30 rounded-2xl overflow-hidden flex items-center justify-center">
+                  {selectedProject.svg()}
+                </div>
 
-              <span className="text-[10px] uppercase font-bold tracking-widest text-yellow-500 block mb-1">
-                {selectedProject.category}
-              </span>
-              <h3 className="text-xl font-extrabold text-foreground mb-1">
-                {selectedProject.name}
-              </h3>
-              <p className="text-xs font-semibold text-yellow-600 mb-4">{selectedProject.status}</p>
+                <div className="flex flex-col justify-center">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-yellow-500 mb-1">
+                    {selectedProject.category}
+                  </span>
+                  <h3 className="text-2xl font-extrabold text-foreground tracking-tight mb-1">
+                    {selectedProject.name}
+                  </h3>
+                  <p className="text-xs font-semibold text-yellow-600 mb-4">{selectedProject.status}</p>
 
-              <p className="text-xs text-foreground/70 leading-relaxed font-light mb-4">
-                {selectedProject.description}
-              </p>
+                  <p className="text-xs text-foreground/60 leading-relaxed mb-5 font-light">
+                    {selectedProject.description}
+                  </p>
 
-              <div className="mb-4">
-                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/50 block mb-2">Tech Stack</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedProject.techStack.map((tech) => (
-                    <span key={tech} className="px-2 py-0.5 bg-muted border border-foreground/5 rounded text-[10px] uppercase font-bold text-foreground/80">
-                      {tech}
-                    </span>
-                  ))}
+                  <div className="mb-5">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/50 block mb-2">Tech Stack</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedProject.techStack.map((tech) => (
+                        <span key={tech} className="px-2.5 py-1 bg-muted border border-foreground/5 rounded-md text-[10px] uppercase font-bold tracking-wider text-foreground/80">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/50 block mb-2">Core Features</span>
+                    <ul className="text-xs text-foreground/60 space-y-1.5 list-disc pl-4 leading-relaxed font-light">
+                      {selectedProject.features.map((feature, idx) => (
+                        <li key={idx}>{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedProject(null)}
+                    className="w-full py-3.5 bg-foreground text-background font-bold rounded-xl text-xs uppercase tracking-widest hover:bg-foreground/80 transition-all shadow-md"
+                  >
+                    Return to Projects
+                  </button>
                 </div>
               </div>
-
-              <div className="mb-6">
-                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/50 block mb-2">Core Features</span>
-                <ul className="text-xs text-foreground/70 space-y-1 list-disc pl-4 leading-relaxed font-light">
-                  {selectedProject.features.map((feature, idx) => (
-                    <li key={idx}>{feature}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="w-full py-3.5 bg-foreground text-background font-bold rounded-xl text-xs uppercase tracking-widest"
-              >
-                Close Details
-              </button>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* Cart Drawer Modal */}
+      {/* MODAL 2: SLIDE-OVER INQUIRY CART DRAWER */}
       <AnimatePresence>
         {isCartOpen && (
           <div className="fixed inset-0 z-50 overflow-hidden">
@@ -596,7 +603,7 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                     {checkoutStep === 'form' && 'Project Scope'}
                     {checkoutStep === 'success' && 'Inquiry Sent'}
                   </h3>
-                  <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-muted rounded-full text-foreground/50">
+                  <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-muted rounded-full text-foreground/50 hover:text-foreground">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -608,13 +615,13 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                     <>
                       {cart.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor" className="w-14 h-14 text-foreground/20 mb-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor" className="w-16 h-16 text-foreground/20 mb-4">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                           </svg>
                           <p className="text-xs text-foreground/40 font-medium">Your basket is empty.</p>
                           <button
                             onClick={() => setIsCartOpen(false)}
-                            className="mt-4 border border-foreground/10 px-5 py-2 rounded-xl text-xs font-bold uppercase text-foreground hover:bg-muted"
+                            className="mt-6 border border-foreground/10 px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest text-foreground hover:bg-muted"
                           >
                             Explore Services
                           </button>
@@ -622,17 +629,17 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                       ) : (
                         <div className="space-y-4">
                           {cart.map((item) => (
-                            <div key={item.service.id} className="flex gap-3 items-center py-2 border-b border-foreground/5 pb-3">
+                            <div key={item.service.id} className="flex gap-4 items-center py-2 border-b border-foreground/5 pb-4">
                               <div className="h-12 w-12 bg-muted/30 rounded-lg flex-shrink-0 border border-foreground/5 overflow-hidden">
                                 {item.service.svg()}
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <h4 className="text-xs font-bold text-foreground truncate">{item.service.name}</h4>
+                              <div className="flex-1">
+                                <h4 className="text-xs font-bold text-foreground">{item.service.name}</h4>
                                 <span className="text-[11px] text-yellow-600 font-bold">Est. ₹{item.service.price.toLocaleString('en-IN')}</span>
                               </div>
                               <button
                                 onClick={() => removeCartItem(item.service.id)}
-                                className="text-foreground/30 hover:text-red-500 p-1"
+                                className="text-foreground/30 hover:text-red-500 transition-colors"
                                 aria-label="Remove item"
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-4 h-4">
@@ -649,45 +656,45 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                   {checkoutStep === 'form' && (
                     <form onSubmit={handleBookingSubmit} className="space-y-5">
                       <div>
-                        <label className="block text-[10px] uppercase font-bold tracking-widest text-foreground/60 mb-1.5">Email Address</label>
+                        <label className="block text-[10px] uppercase font-bold tracking-widest text-foreground/60 mb-2">Email Address</label>
                         <input
                           type="email"
                           required
                           value={emailBooking}
                           onChange={(e) => setEmailBooking(e.target.value)}
                           placeholder="client@domain.com"
-                          className="w-full bg-muted/20 border border-foreground/10 px-3.5 py-2.5 rounded-xl text-xs text-foreground focus:outline-none focus:border-yellow-400"
+                          className="w-full bg-muted/20 border border-foreground/10 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-yellow-400 transition-colors text-foreground"
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] uppercase font-bold tracking-widest text-foreground/60 mb-1.5">Project Brief & Details</label>
+                        <label className="block text-[10px] uppercase font-bold tracking-widest text-foreground/60 mb-2">Project Brief & Details</label>
                         <textarea
                           required
-                          rows={3}
+                          rows={4}
                           value={briefBooking}
                           onChange={(e) => setBriefBooking(e.target.value)}
-                          placeholder="Describe your project requirements..."
-                          className="w-full bg-muted/20 border border-foreground/10 px-3.5 py-2.5 rounded-xl text-xs text-foreground focus:outline-none focus:border-yellow-400 resize-none"
+                          placeholder="Describe your project requirements and custom specs..."
+                          className="w-full bg-muted/20 border border-foreground/10 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-yellow-400 transition-colors resize-none text-foreground"
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] uppercase font-bold tracking-widest text-foreground/60 mb-1.5">Preferred Timeline</label>
+                        <label className="block text-[10px] uppercase font-bold tracking-widest text-foreground/60 mb-2">Preferred Timeline</label>
                         <input
                           type="text"
                           required
                           value={timelineBooking}
                           onChange={(e) => setTimelineBooking(e.target.value)}
-                          placeholder="e.g. 2 months, urgent start"
-                          className="w-full bg-muted/20 border border-foreground/10 px-3.5 py-2.5 rounded-xl text-xs text-foreground focus:outline-none focus:border-yellow-400"
+                          placeholder="e.g. 2 months, urgent start, flexible"
+                          className="w-full bg-muted/20 border border-foreground/10 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-yellow-400 transition-colors text-foreground"
                         />
                       </div>
 
-                      <div className="bg-muted/30 p-3.5 rounded-xl space-y-1.5">
+                      <div className="bg-muted/30 p-3.5 rounded-xl space-y-2">
                         <div className="flex justify-between text-xs text-foreground/60 font-medium">
                           <span>Services Selected</span>
                           <span>{cart.length}</span>
                         </div>
-                        <div className="flex justify-between text-xs text-foreground font-bold border-t border-foreground/5 pt-1.5 mt-1.5">
+                        <div className="flex justify-between text-xs text-foreground font-bold border-t border-foreground/5 pt-2 mt-2">
                           <span>Estimated Cost</span>
                           <span>₹{cartSubtotal.toLocaleString('en-IN')}</span>
                         </div>
@@ -696,7 +703,7 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                       <button
                         type="submit"
                         disabled={isSubmittingBooking}
-                        className="w-full py-3.5 bg-[#25D366] text-white text-xs font-bold uppercase tracking-widest rounded-xl flex items-center justify-center gap-2"
+                        className="w-full py-3.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 shadow-lg shadow-[#25D366]/20"
                       >
                         <WhatsAppIcon className="w-4 h-4 flex-shrink-0" />
                         Send via WhatsApp
@@ -705,22 +712,26 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
                   )}
 
                   {checkoutStep === 'success' && (
-                    <div className="h-full flex flex-col items-center justify-center text-center p-2">
-                      <div className="h-14 w-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 mb-4">
+                    <div className="h-full flex flex-col items-center justify-center text-center p-4">
+                      <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="h-14 w-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 mb-5"
+                      >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-7 h-7">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                         </svg>
-                      </div>
-                      <h4 className="text-lg font-bold text-foreground mb-1">Inquiry Transmitted!</h4>
-                      <p className="text-xs text-foreground/50 leading-relaxed font-light">
-                        Thank you. Your project brief has been sent. I will review and follow up shortly.
+                      </motion.div>
+                      <h4 className="text-lg font-bold text-foreground mb-2">Inquiry Transmitted!</h4>
+                      <p className="text-xs text-foreground/50 leading-relaxed font-light max-w-xs">
+                        Thank you. Your project brief has been sent. I will review your requirements and follow up via email shortly to schedule a consultation.
                       </p>
                       <button
                         onClick={() => {
                           setCheckoutStep('cart');
                           setIsCartOpen(false);
                         }}
-                        className="mt-6 px-6 py-2.5 bg-foreground text-background text-xs font-bold uppercase tracking-widest rounded-xl"
+                        className="mt-6 px-6 py-2.5 bg-foreground text-background text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-foreground/80 transition-colors"
                       >
                         Return to Services
                       </button>
@@ -730,15 +741,15 @@ export const MobileLayout: React.FC<DesktopLayoutProps> = ({
 
                 {cart.length > 0 && checkoutStep === 'cart' && (
                   <div className="p-5 border-t border-foreground/5 bg-background">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-xs text-foreground/50 font-medium">Estimated Cost</span>
+                    <div className="flex justify-between items-center mb-5">
+                      <span className="text-xs text-foreground/50 font-medium">Estimated Project Cost</span>
                       <span className="text-lg font-extrabold text-foreground">₹{cartSubtotal.toLocaleString('en-IN')}</span>
                     </div>
                     <button
                       onClick={() => setCheckoutStep('form')}
-                      className="w-full py-3.5 bg-foreground text-background text-xs font-bold uppercase tracking-widest rounded-xl text-center block"
+                      className="w-full py-3.5 bg-foreground text-background text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-foreground/90 transition-colors shadow-md text-center block"
                     >
-                      Book Consultation
+                      Book Free Consultation
                     </button>
                   </div>
                 )}
