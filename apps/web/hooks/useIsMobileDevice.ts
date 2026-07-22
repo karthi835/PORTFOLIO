@@ -16,28 +16,9 @@ export function useIsMobileDevice(): boolean {
   useEffect(() => {
     const checkIsMobileDevice = () => {
       if (typeof window === "undefined") return;
-
-      // 1. Min physical screen dimension in CSS pixels (portrait width / landscape height)
-      const minScreenDim = Math.min(window.screen.width, window.screen.height);
-
-      // 2. Hardware touch capabilities
-      const hasTouchSupport =
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0 ||
-        (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
-
-      // 3. Standard mobile User-Agent check
-      const isMobileUA = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobi/i.test(
-        navigator.userAgent
-      );
-
-      // Physical phone detection criteria:
-      // Mobile phones have small physical screen width/height (min dimension <= 820px) AND touch capabilities,
-      // OR explicitly report a mobile user agent.
-      // Desktop PCs have min dimension >= 720/768/1080 and 0 touch points (or min dimension > 820 for touch laptops).
-      const isRealMobilePhone = (minScreenDim <= 820 && hasTouchSupport) || isMobileUA;
-
-      setIsMobile(isRealMobilePhone);
+      // Match Tailwind 'md' breakpoint (< 768px is mobile layout, >= 768px is desktop layout)
+      // This respects Chrome/Safari's "Desktop site" mode on mobile phones.
+      setIsMobile(window.innerWidth < 768);
     };
 
     checkIsMobileDevice();
