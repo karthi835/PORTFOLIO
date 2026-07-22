@@ -43,12 +43,22 @@ const Starfield = ({
     let currentTime = 0;
 
     const setSize = () => {
-      size.x = container.clientWidth;
-      size.y = container.clientHeight;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      // Prevent createImageData(0, 0) error when container is hidden (display: none)
+      if (width <= 0 || height <= 0) {
+        size.x = 0;
+        size.y = 0;
+        return;
+      }
+
+      size.x = width;
+      size.y = height;
       canvas.width = size.x;
       canvas.height = size.y;
 
-      // Initialize pixel data
+      // Initialize pixel data safely
       imagedata = context.createImageData(size.x, size.y);
       const buf = new ArrayBuffer(imagedata.data.length);
       new Uint8ClampedArray(buf);
@@ -134,6 +144,13 @@ const Starfield = ({
     };
 
     const render = () => {
+      if (size.x <= 0 || size.y <= 0 || !imagedata || !data) {
+        if (container.clientWidth > 0 && container.clientHeight > 0) {
+          setSize();
+        }
+        animationFrameRef.current = requestAnimationFrame(render);
+        return;
+      }
       currentTime = (Date.now() - startTime) / 10;
 
       context.fillStyle = '#000000';

@@ -112,10 +112,10 @@ export const MinimalistHero = ({
         )}
       >
 
-      {/* ── decorative grain overlay ── */}
+      {/* ── decorative grain overlay (desktop 1025px+ only) ── */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-10 opacity-[0.02]"
+        className="pointer-events-none absolute inset-0 z-10 opacity-[0.02] hidden lg:block"
         style={{
           backgroundImage:
               'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
@@ -152,11 +152,11 @@ export const MinimalistHero = ({
       )}
 
       {/* ══════════════════ MAIN CONTENT ══════════════════ */}
-      <div className="relative z-10 flex flex-1 items-stretch w-full pr-0 md:pr-14 md:-translate-y-[13vh]">
+      <div className="relative z-10 flex flex-1 items-stretch w-full pr-0 md:pr-14 md:-translate-y-[13vh] pb-[140px] md:pb-0">
 
         {/* ── Left: Bio, Read More & Icons — vertically centered (desktop only) ── */}
         <div
-          className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-6 md:left-10 z-30 flex-col gap-4 text-left items-start max-w-[280px] pb-0"
+          className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-6 md:left-10 lg:left-14 xl:left-20 z-30 flex-col gap-4 text-left items-start max-w-[280px] lg:max-w-[310px] pb-0"
         >
           {/* Bio text */}
           <p
@@ -297,9 +297,9 @@ export const MinimalistHero = ({
             ))}
           </div>
 
-          {/* RESPONSIVE: Image container uses w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[550px] max-w-full aspect-[3/4] */}
+          {/* RESPONSIVE: Image container uses w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[clamp(440px,33vw,500px)] xl:w-[500px] max-w-full aspect-[3/4] */}
           <motion.div
-            className="relative flex items-end justify-center w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[550px] max-w-full aspect-[3/4] pointer-events-auto overflow-hidden mx-auto"
+            className="relative flex items-end justify-center w-[85vw] sm:w-[70vw] md:w-[450px] lg:w-[clamp(440px,33vw,500px)] xl:w-[500px] max-w-full aspect-[3/4] pointer-events-auto overflow-hidden mx-auto"
             style={{
               maskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
               WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 90%)',
@@ -341,22 +341,30 @@ export const MinimalistHero = ({
               }}
             />
 
-            {/* Mobile CV chip — positioned cleanly directly over image bottom */}
-            <button
-              onClick={onCvClick}
-              className="absolute bottom-4 sm:bottom-6 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/20 bg-black/80 px-5 py-2.5 backdrop-blur-sm md:hidden pointer-events-auto cursor-pointer active:scale-95 transition-all text-[11px] font-extrabold uppercase tracking-widest text-white hover:bg-black/95 hover:border-white whitespace-nowrap shadow-lg"
-            >
-              {overlayText.part1} · {overlayText.part2} · View CV
-            </button>
+
           </motion.div>
         </div>
 
-        {/* ── Right Side: KARTHIK DEVELOPER (typewriter) ── */}
+        {/* ── Right Side: KARTHIK DEVELOPER (typewriter, desktop/tablet only) ── */}
         <TypewriterWords
           part1={overlayText.part1}
           part2={overlayText.part2}
           onCvClick={onCvClick}
         />
+
+        {/* ── Mobile-only: Heading + View CV button below portrait ── */}
+        <div className="md:hidden absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-6 px-6 z-30">
+          <h1 className="font-extrabold tracking-tight leading-tight text-white text-2xl uppercase text-center font-mono select-none">
+            <span className="block">{overlayText.part1}</span>
+            <span className="block">{overlayText.part2}</span>
+          </h1>
+          <button
+            onClick={onCvClick}
+            className="rounded-full border border-white/20 bg-black/80 px-6 py-2.5 backdrop-blur-sm pointer-events-auto cursor-pointer active:scale-95 transition-all text-[11px] font-extrabold uppercase tracking-widest text-white hover:bg-black/95 hover:border-white whitespace-nowrap shadow-lg"
+          >
+            View CV
+          </button>
+        </div>
 
       </div>
 
@@ -399,7 +407,7 @@ function TypewriterWords({
   const { displayed1, displayed2, done } = useTypewriter([part1, part2], 95, 320);
 
   return (
-    <div className="hidden md:flex z-30 w-[25%] lg:w-[28%] flex-col justify-center items-end text-right ml-auto gap-5 pr-2 md:pr-6 lg:pr-0">
+    <div className="hidden md:flex z-30 w-[25%] lg:w-[26%] xl:w-[28%] flex-col justify-center items-end text-right ml-auto gap-5 pr-2 md:pr-6 lg:pr-10 xl:pr-14">
       <h1
         className="font-extrabold tracking-tight leading-[1.05] text-white text-2xl md:text-3xl lg:text-4xl xl:text-5xl uppercase select-none font-mono"
         aria-label={`${part1} ${part2}`}
